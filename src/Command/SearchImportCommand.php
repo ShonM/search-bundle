@@ -94,7 +94,7 @@ EOT
             $allResponses = [];
             foreach (is_subclass_of($entityClassName, Aggregator::class) ? $entityClassName::getEntities() : [$entityClassName] as $entityClass) {
                 $manager    = $this->managerRegistry->getManagerForClass($entityClass, $entityManagers[$entityClass]);
-                $repository = $manager->getRepository($entityClass);
+                $repository = $manager->getRepository($entityClass, $entityManagers[$entityClass]);
 
                 $page = 0;
                 do {
