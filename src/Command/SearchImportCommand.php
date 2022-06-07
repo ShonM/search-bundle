@@ -76,6 +76,7 @@ EOT
         $entitiesToIndex       = $this->getEntitiesFromArgs($input, $output);
         $config                = $this->searchService->getConfiguration();
         $indexingService       = ($shouldDoAtomicReindex ? $this->searchServiceForAtomicReindex : $this->searchService);
+        $entityManagers        = array_combine(array_column($config['indices'], 'class'), array_column($config['indices'], 'entity_manager'));
 
         foreach ($entitiesToIndex as $entityClassName) {
             if (!$this->searchService->isSearchable($entityClassName)) {
@@ -92,8 +93,8 @@ EOT
 
             $allResponses = [];
             foreach (is_subclass_of($entityClassName, Aggregator::class) ? $entityClassName::getEntities() : [$entityClassName] as $entityClass) {
-                $manager    = $this->managerRegistry->getManagerForClass($entityClass);
-                $repository = $manager->getRepository($entityClass);
+                $manager    = $this->managerRegistry->getManagerForClass($entityClass, $entityManagers[$entityClass]);
+                $repository = $manager->getRepository($entityClass, $entityManagers[$entityClass]);
 
                 $page = 0;
                 do {
